@@ -1,46 +1,4 @@
 require 'pry'
-#
-# files = ['foo.css']
-# files.each do |file|
-#   file = File.open(file, 'w+')
-#
-#   file.puts(".accordionSection h2 {
-#     border-bottom: 1px solid;
-#     font-size: 16px;
-#     cursor: pointer;
-#   }
-#   .accordionSection.closed .accordionContents {
-#     display: none
-#   }
-#   img.imgThumbnail {
-#     width: 800px;
-#     cursor: pointer;
-#   }
-#   img.imgThumbnail.inactive {
-#     width: 300px;
-#   }
-#   img.buildiumtip {
-#     border: 0px;
-#     position: relative;
-#     top: -7px;
-#   }
-#   .smallFont {
-#     font-size: 10px;
-#   }
-#   .article-body ul.eg {
-#     margin: -10px 20px;
-#   }
-#   foo")
-#
-#   file.close
-# end
-#
-# file_names = ['foo.css']
-#
-# file_names.each do |file_name|
-#   text = File.read(file_name)
-#   File.open(file_name, 'w') { |file| file.puts text.gsub('foo', 'BAR') }
-# end
 
 # ==============================Find and Replace================================
 
@@ -58,7 +16,7 @@ find_and_replaces = [
   { 'dir="ltr"' => ''}
 ]
 
-html_files = SOMEDIRECTORYBUTWHICH # TODO: get the right folder
+html_files = 'html_files' # TODO: get the right folder
 Dir.foreach(html_files) do |file_name|
   text = File.read(file_name)
   File.open(file_name, 'w') do |file|
