@@ -1,0 +1,27 @@
+.accordionSection h2 {
+    border-bottom: 1px solid;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .accordionSection.closed .accordionContents {
+    display: none
+  }
+  img.imgThumbnail {
+    width: 800px;
+    cursor: pointer;
+  }
+  img.imgThumbnail.inactive {
+    width: 300px;
+  }
+  img.buildiumtip {
+    border: 0px;
+    position: relative;
+    top: -7px;
+  }
+  .smallFont {
+    font-size: 10px;
+  }
+  .article-body ul.eg {
+    margin: -10px 20px;
+  }
+  BAR
