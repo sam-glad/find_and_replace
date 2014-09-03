@@ -35,6 +35,14 @@ Dir.glob(html_files) do |html_file|
     file.puts text
   end
 
+  # Replace style="italic" with <em> tags within <li> elements
+  File.open(html_file, 'w') do |file|
+    text = text.gsub(/\<li\sstyle="font-style:\sitalic;"\svalue=\"\d*\"\>(.|\s)*?\<\/li\>/) do
+      "<li><em>#{Nokogiri::HTML($&).css('li').text}</em></li>"
+    end
+    file.puts text
+  end
+
   # Replace style="italic" with <em> tags in unordered lists
   File.open(html_file, 'w') do |file|
     text.gsub!(/\<ul\sstyle=\"font-style\:\sitalic\;\"\>((.|\s)*?)\<\/ul\>/) do
@@ -55,7 +63,7 @@ Dir.glob(html_files) do |html_file|
 
 # Replace MCPopupThumbnail img nonsense with an expandable img
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\".*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
+    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\"(.|\s)*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
       title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
       src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first['href']
       replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
