@@ -1,3 +1,0 @@
--Get rid of all <strong>s in lis?
--"Overarching script file" and "overarching css file" - where?
--
