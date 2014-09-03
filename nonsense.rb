@@ -14,11 +14,15 @@ require 'open-uri'
 # end
 
 
-file_names = ['foo.css']
+# file_names = ['foo.css']
+#
+# file_names.each do |file_name|
+#   puts file_name.class
+#   text = File.read(file_name)
+#   binding.pry
+#   File.open(file_name, 'w') { |file| file.puts text.gsub('foo', 'BAR') }
+# end
 
-file_names.each do |file_name|
-  puts file_name.class
-  text = File.read(file_name)
-  binding.pry
-  File.open(file_name, 'w') { |file| file.puts text.gsub('foo', 'BAR') }
+foo.css('p').each do |element|
+  
 end

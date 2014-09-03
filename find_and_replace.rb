@@ -54,8 +54,17 @@ Dir.glob(html_files) do |html_file|
   end
 
   # Replace MCPopupThumbnail img nonsense with an expandable img
+  # File.open(html_file, 'w') do |file|
+  #   text = text.gsub(/\<a class\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\shref\=\"http.?\:.*\"\>\<img class\=\"imgThumbnail\sinactive\"\s.*<\/a\>/) do |replace_with|
+  #     title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
+  #     src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['src']
+  #     replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
+  #   end
+  #   file.puts text
+  # end
+
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<a class\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\shref\=\"http.?\:.*\"\>\<img class\=\"imgThumbnail\sinactive\"\s.*<\/a\>/) do |replace_with|
+    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\".*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"\stitle\=\".*?\"\s*?src\=\".*?\"\s*?\/\>\s*?\<\/a\>/) do |replace_with|
       title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
       src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['src']
       replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
