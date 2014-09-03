@@ -52,7 +52,7 @@ Dir.glob(html_files) do |html_file|
     end
     file.puts text
   end
-  
+
 # Replace MCPopupThumbnail img nonsense with an expandable img
   File.open(html_file, 'w') do |file|
     text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\".*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
@@ -64,54 +64,3 @@ Dir.glob(html_files) do |html_file|
   end
 
 end
-
-# ==============================Adding the CSS==================================
-#
-# files = ['foo.css'] # TODO: get the right files and stick them here
-# files.each do |file|
-#   file = File.open(file, 'w+')
-#
-#   file.puts(".accordionSection h2 {
-#     border-bottom: 1px solid;
-#     font-size: 16px;
-#     cursor: pointer;
-#   }
-#   .accordionSection.closed .accordionContents {
-#     display: none
-#   }
-#   img.imgThumbnail {
-#     width: 800px;
-#     cursor: pointer;
-#   }
-#   img.imgThumbnail.inactive {
-#     width: 300px;
-#   }
-#   img.buildiumtip {
-#     border: 0px;
-#     position: relative;
-#     top: -7px;
-#   }
-#   .smallFont {
-#     font-size: 10px;
-#   }
-#   .article-body ul.eg {
-#     margin: -10px 20px;
-#   }"
-#   )
-#   file.close
-# end
-#
-# # =============================Adding the Script================================
-#
-# files = ['foo.js'] # TODO: get the right files and stick them here
-# files.each do |file|
-#   file = File.open(file, 'w+')
-#
-#   file.puts("$('.accordionSection h2').on('click', function(e) {\n\n" \
-# "  $(e.currentTarget).closest('.accordionSection').toggleClass('closed');\n\n" \
-# "});\n\n" \
-# "$('img.imgThumbnail').on('click', function(e) {\n\n" \
-# "  $(e.currentTarget).toggleClass('inactive');\n\n" \
-# "});"
-# )
-# end
