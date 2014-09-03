@@ -4,19 +4,19 @@ require 'nokogiri'
 # ==============================Find and Replace================================
 
 find_and_replaces = {
-  /<span class=\"[a-zA-z]*\">/ => '',
+  # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
   '<p>&nbsp;</p>' => '',
-  'MCDropDown MCDropDown_Open dropDown' => 'accordionSection closed',
-  'MCDropDownBody dropDownBody' => 'accordionContents',
-  'MCPopupThumbnail img  img BigImage' => 'imgThumbnail inactive',
+  'MCDropDown MCDropDown_Open dropDown ' => 'accordionSection closed',
+  'MCDropDownBody dropDownBody ' => 'accordionContents',
   '<strong><span ' => '<strong ',
   '</span></strong>' => '</strong>',
   '<p>&nbsp;</p>' => '',
-  / value=\"[0-9]\"/ => '',
+  /<li\svalue\=\"\d*?\">/ => '<li>',
   'dir="ltr"' => ''
   # TODO: smallFont -> font-style:
 }
 
+# Find and replace everything in the find_and_replaces hash above
 html_files = '/Users/samuelgladstone/Dropbox/work/html_files/*.html'
 Dir.glob(html_files) do |html_file|
   text = File.read(html_file) # String: the whole html file
@@ -52,21 +52,12 @@ Dir.glob(html_files) do |html_file|
     end
     file.puts text
   end
-
-  # Replace MCPopupThumbnail img nonsense with an expandable img
-  # File.open(html_file, 'w') do |file|
-  #   text = text.gsub(/\<a class\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\shref\=\"http.?\:.*\"\>\<img class\=\"imgThumbnail\sinactive\"\s.*<\/a\>/) do |replace_with|
-  #     title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
-  #     src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['src']
-  #     replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
-  #   end
-  #   file.puts text
-  # end
-
+  
+# Replace MCPopupThumbnail img nonsense with an expandable img
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\".*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"\stitle\=\".*?\"\s*?src\=\".*?\"\s*?\/\>\s*?\<\/a\>/) do |replace_with|
+    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\".*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
       title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
-      src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['src']
+      src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first['href']
       replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
     end
     file.puts text
@@ -112,7 +103,7 @@ end
 #
 # # =============================Adding the Script================================
 #
-# files = ['foo.css'] # TODO: get the right files and stick them here
+# files = ['foo.js'] # TODO: get the right files and stick them here
 # files.each do |file|
 #   file = File.open(file, 'w+')
 #
