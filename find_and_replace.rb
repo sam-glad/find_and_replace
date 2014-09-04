@@ -13,7 +13,7 @@ find_and_replaces = {
   '<p>&nbsp;</p>' => '',
   /<li\svalue\=\"\d*?\">/ => '<li>',
   'dir="ltr"' => '',
-  /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>' # TODO: Check if this is even necessary?
+  /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>' # TODO: Check if this is even necessary
   # TODO: smallFont -> font-style:
 }
 
@@ -72,7 +72,7 @@ Dir.glob(html_files) do |html_file|
     file.puts text
   end
 
-  # Remove classes spans (produced by line 16 of this file)
+  # Remove classes spans (produced by line 16 of this file) TODO: Check if replacing those spans (line 16) is even necessary
   File.open(html_file, 'w') do |file|
     text.gsub!(/\<span\>*\s*\>.*\<\/span\>/) do
       $&[6..-8]
