@@ -12,7 +12,8 @@ find_and_replaces = {
   '</span></strong>' => '</strong>',
   '<p>&nbsp;</p>' => '',
   /<li\svalue\=\"\d*?\">/ => '<li>',
-  'dir="ltr"' => ''
+  'dir="ltr"' => '',
+  /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>' # TODO: Check if this is even necessary?
   # TODO: smallFont -> font-style:
 }
 
@@ -29,7 +30,7 @@ Dir.glob(html_files) do |html_file|
 
   # Replace style="italic" with <em> tags within paragraph text
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<p style\=\"font-style\: italic;\"\>.*\<\/p\>/) do
+    text.gsub!(/\<p style\=\"font-style\: italic;\"\>.*\<\/p\>/) do
       "<p><em>#{Nokogiri::HTML($&).css('p').text}</em></p>"
     end
     file.puts text
@@ -37,7 +38,7 @@ Dir.glob(html_files) do |html_file|
 
   # Replace style="italic" with <em> tags within <li> elements
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<li\sstyle="font-style:\sitalic;"\svalue=\"\d*\"\>(.|\s)*?\<\/li\>/) do
+    text.gsub!(/\<li\sstyle="font-style:\sitalic;"\svalue=\"\d*\"\>(.|\s)*?\<\/li\>/) do
       "<li><em>#{Nokogiri::HTML($&).css('li').text}</em></li>"
     end
     file.puts text
@@ -55,20 +56,35 @@ Dir.glob(html_files) do |html_file|
 
   # Replace style="italic" with <em> tags in ordered lists
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<ol style\=\"font-style\: italic\;\"\>(\s*|.*)*\<\/ol\>/) do
+    text.gsub!(/\<ol style\=\"font-style\: italic\;\"\>(\s*|.*)*\<\/ol\>/) do
       "<ol><em>#{Nokogiri::HTML($&).css('ol').text}</em></ol>"
     end
     file.puts text
   end
 
-# Replace MCPopupThumbnail img nonsense with an expandable img
+ # Replace MCPopupThumbnail img nonsense with an expandable img
   File.open(html_file, 'w') do |file|
-    text = text.gsub(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\"(.|\s)*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
+    text.gsub!(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailPopup\"\s+href\=\"(.|\s)*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*?img\sBigImage"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do |replace_with|
       title = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first.css('img').first['title']
       src = Nokogiri::HTML(text).css("a[class='MCPopupThumbnailLink MCPopupThumbnailPopup']").first['href']
       replace_with = "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
     end
     file.puts text
   end
+
+  # Remove classes spans (produced by line 16 of this file)
+  File.open(html_file, 'w') do |file|
+    text.gsub!(/\<span\>*\s*\>.*\<\/span\>/) do
+      $&[6..-8]
+    end
+    file.puts text
+  end
+
+  # File.open(html_file, 'w') do |file|
+  #   Nokogiri::HTML(text).css('span[class="MCDropDownHotSpot dropDownHotspot  MCDropDownHotSpot_"]').each do |useless_span|
+  #     useless_span.gsub!(/<span\sclass\=\"MCDropDownHotSpot[^>]*?>/, '').slice!(-7..-1)
+  #   end
+  #   file.puts text
+  # end
 
 end
