@@ -1,8 +1,6 @@
 require 'pry'
 require 'nokogiri'
 
-# ==============================Find and Replace================================
-
 find_and_replaces = {
   # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
   '<p>&nbsp;</p>' => '',
@@ -15,8 +13,7 @@ find_and_replaces = {
   'dir="ltr"' => '',
   /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>', # TODO: Check if this is even necessary
   /\<span class\=\"MCDropDownHead\s*dropDownHead\s\"\>/ => '<span>', #TODO: Check if this is even necessary
-  'style="font-size: 10pt;"' => 'class="smallFont"', # TODO: verify that this works properly
-  '<p class="MCWebHelpFramesetLink MCWebHelpFramesetLinkTop">&nbsp;</p>' => ''
+  'style="font-size: 10pt;"' => 'class="smallFont"' # TODO: verify that this works properly
 }
 
 # Find and replace everything in the find_and_replaces hash above
@@ -87,20 +84,19 @@ Dir.glob(html_files) do |html_file|
   # actually fires, since it looks for them
   File.open(html_file, 'w') do |file|
     accordion_regex = /<div\sclass\=\"accordionSection\sclosed\"\>.*?\<div\sclass\=\"accordionContents\"\>/m
+    # binding.pry if html_file == '/Users/samuelgladstone/Dropbox/work/html_files/work_orders.html'
     if accordion_regex.match(text) && !accordion_regex.match(text).to_s.include?('<h2>')
       text.gsub!(/<div\sclass\=\"accordionSection\sclosed\"\>.*?\<div\sclass\=\"accordionContents\"\>/m) do
-        gsub_result = $&
-        gsub_result_without_divs = gsub_result.gsub(/<div\sclass\=\"accordionSection\sclosed\"\>\s*/, '').gsub(/\s*\<div\sclass\=\"accordionContents\"\>/, '')
-        if !(gsub_result_without_divs.include?('<h2>') && gsub_result_without_divs.include?('</h2>'))
+        regex_match = $&
+        regex_match_without_divs = regex_match.gsub(/<div\sclass\=\"accordionSection\sclosed\"\>\s*/, '').gsub(/\s*\<div\sclass\=\"accordionContents\"\>/, '')
+        if !(regex_match_without_divs.include?('<h2>') && regex_match_without_divs.include?('</h2>'))
           # Add in <h2> and </h2> tags
           "<div class=\"accordionSection closed\">\n\t<h2>" \
-          "#{gsub_result_without_divs}</h2>\n<div class=\"accordionContents\">"
+          "#{regex_match_without_divs}</h2>\n<div class=\"accordionContents\">"
         end
       end
-      file.puts text
-    else
-      file.puts text
     end
+    file.puts text
   end
-  
+
 end
