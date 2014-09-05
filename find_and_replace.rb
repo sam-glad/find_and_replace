@@ -102,12 +102,5 @@ Dir.glob(html_files) do |html_file|
       file.puts text
     end
   end
-
-  # File.open(html_file, 'w') do |file|
-  #   Nokogiri::HTML(text).css('span[class="MCDropDownHotSpot dropDownHotspot  MCDropDownHotSpot_"]').each do |useless_span|
-  #     useless_span.gsub!(/<span\sclass\=\"MCDropDownHotSpot[^>]*?>/, '').slice!(-7..-1)
-  #   end
-  #   file.puts text
-  # end
-
+  
 end
