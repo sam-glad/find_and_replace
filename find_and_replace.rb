@@ -1,5 +1,6 @@
 require 'pry'
 require 'nokogiri'
+require 'open-uri'
 
 find_and_replaces = {
   # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
