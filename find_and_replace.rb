@@ -108,13 +108,7 @@ Dir.glob(html_files) do |html_file|
   end
 end
 
-# Safety valve for avoiding accidentally PUTting before this file is complete
-# binding.pry
-
 #=============================Applying the Changes==============================
-
-# Another safety valve
-# binding.pry
 
 articles_changed = 1
 MAX_ARTICLES_CHANGED = 1
