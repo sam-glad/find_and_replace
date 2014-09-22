@@ -108,7 +108,13 @@ Dir.glob(html_files) do |html_file|
   end
 end
 
+# SAFETY VALVE
+# binding.pry
+
 #=============================Applying the Changes==============================
+
+# ANOTHER SAFETY VALVE
+# binding.pry
 
 articles_changed = 1
 MAX_ARTICLES_CHANGED = 1
@@ -120,7 +126,7 @@ Dir.glob(html_files) do |html_file|
   replacement_json = "{\"article\":{\"body\":\"#{new_body}\"}}"
   id = html_file.gsub('/Users/samuelgladstone/Dropbox/zendesk_articles/', '').gsub(/[a-zA-Z\d\s]*(?=\()/, '').gsub(/[\(\)]/, '').gsub('.html', '')
   # PUT new auto-formed body via an API call
-  c = Curl::Easy.http_put("https://buildium1389260253.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
+  c = Curl::Easy.http_put("https://buildium.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
     curl.http_auth_types = :basic
     # TODO: Make sure these are in a .env file
     curl.username = ENV["API_EMAIL"]
