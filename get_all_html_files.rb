@@ -4,12 +4,15 @@ require 'open-uri'
 require 'curb'
 require 'json'
 
-# Pull all articles and info via API
-api_result = open('https://buildium1389260253.zendesk.com/api/v2/help_center/articles.json').read
+# Pull first 30 articles and info via API
+api_result = open('https://buildium.zendesk.com/api/v2/help_center/articles.json').read
 articles = JSON.parse(api_result)["articles"]
 
 articles.each do |article|
-  File.open("/Users/samuelgladstone/Dropbox/zendesk_articles/#{article["title"]} (#{article["id"]}).html", 'w') do |f|
+  id = article["id"]
+  # Remove slash character so as not to mess up file path
+  title = article["title"].gsub('/', '')
+  File.open("/Users/samuelgladstone/Dropbox/zendesk_articles/#{title} (#{id}).html", 'w') do |f|
     f.write("#{article["body"]}")
   end
 end
