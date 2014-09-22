@@ -1,6 +1,13 @@
 require 'pry'
 require 'nokogiri'
 require 'open-uri'
+require 'curb'
+require 'json'
+require 'dotenv'
+
+Dotenv.load
+
+#===========================Find-and-Replace Info===============================
 
 find_and_replaces = {
   # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
@@ -18,7 +25,7 @@ find_and_replaces = {
 }
 
 # Find and replace everything in the find_and_replaces hash above
-html_files = '/Users/samuelgladstone/Dropbox/work/html_files/*.html'
+html_files = '/Users/samuelgladstone/Dropbox/zendesk_articles/*.html'
 Dir.glob(html_files) do |html_file|
   text = File.read(html_file) # String: the whole html file
   find_and_replaces.each do |old_version, new_version|
@@ -99,5 +106,36 @@ Dir.glob(html_files) do |html_file|
     end
     file.puts text
   end
+end
 
+# Safety valve for avoiding accidentally PUTting before this file is complete
+# binding.pry
+
+#=============================Applying the Changes==============================
+
+# Another safety valve
+# binding.pry
+
+articles_changed = 1
+MAX_ARTICLES_CHANGED = 1
+MAX_ARTICLES_PER_MINUTE = 200 # TODO: Double-check that this is the right number
+
+# Set changes to each article's body and PUT it via the API
+Dir.glob(html_files) do |html_file|
+  new_body = File.read(html_file).gsub(/\r/, '\\\\r').gsub(/\n/, '\\\\n').gsub(/\"/, '\\\\"')
+  replacement_json = "{\"article\":{\"body\":\"#{new_body}\"}}"
+  id = html_file.gsub('/Users/samuelgladstone/Dropbox/zendesk_articles/', '').gsub(/[a-zA-Z\d\s]*(?=\()/, '').gsub(/[\(\)]/, '').gsub('.html', '')
+  # PUT new auto-formed body via an API call
+  c = Curl::Easy.http_put("https://buildium1389260253.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
+    curl.http_auth_types = :basic
+    # TODO: Make sure these are in a .env file
+    curl.username = ENV["API_EMAIL"]
+    curl.password = ENV["API_PASSWORD"]
+    curl.headers['Content-Type'] = 'application/json'
+    curl.verbose = true
+  end
+  puts c.status # TODO temporary
+  puts c.body_str # TODO temporary
+  articles_changed += 1
+  break if articles_changed > MAX_ARTICLES_CHANGED
 end
