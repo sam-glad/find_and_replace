@@ -25,7 +25,7 @@ find_and_replaces = {
 }
 
 # Find and replace everything in the find_and_replaces hash above
-html_files = '/Users/samuelgladstone/Dropbox/zendesk_articles/*.html'
+html_files = '/Users/samuelgladstone/Dropbox/zendesk_articles/unchanged_articles/*.html'
 Dir.glob(html_files) do |html_file|
   text = File.read(html_file) # String: the whole html file
   find_and_replaces.each do |old_version, new_version|
@@ -109,33 +109,34 @@ Dir.glob(html_files) do |html_file|
 end
 
 # SAFETY VALVE
-# binding.pry
+binding.pry
 
 #=============================Applying the Changes==============================
 
 # ANOTHER SAFETY VALVE
-# binding.pry
+binding.pry
 
 articles_changed = 1
-MAX_ARTICLES_CHANGED = 1
-MAX_ARTICLES_PER_MINUTE = 200 # TODO: Double-check that this is the right number
+MAX_ARTICLES_CHANGED = 30
+MAX_ARTICLES_PER_MINUTE = 200
 
 # Set changes to each article's body and PUT it via the API
 Dir.glob(html_files) do |html_file|
+  # Escape all backslashes again so as not to upset JSON
   new_body = File.read(html_file).gsub(/\r/, '\\\\r').gsub(/\n/, '\\\\n').gsub(/\"/, '\\\\"')
   replacement_json = "{\"article\":{\"body\":\"#{new_body}\"}}"
-  id = html_file.gsub('/Users/samuelgladstone/Dropbox/zendesk_articles/', '').gsub(/[a-zA-Z\d\s]*(?=\()/, '').gsub(/[\(\)]/, '').gsub('.html', '')
+  id = html_file.gsub('/Users/samuelgladstone/Dropbox/zendesk_articles/unchanged_articles/', '').gsub(/.*(?=\()/, '').gsub(/[\(\)]/, '').gsub('.html', '')
   # PUT new auto-formed body via an API call
   c = Curl::Easy.http_put("https://buildium.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
     curl.http_auth_types = :basic
-    # TODO: Make sure these are in a .env file
     curl.username = ENV["API_EMAIL"]
     curl.password = ENV["API_PASSWORD"]
     curl.headers['Content-Type'] = 'application/json'
-    curl.verbose = true
+    # curl.verbose = true
   end
-  puts c.status # TODO temporary
-  puts c.body_str # TODO temporary
+  puts html_file.to_s
+  puts c.status
+  puts
   articles_changed += 1
   break if articles_changed > MAX_ARTICLES_CHANGED
 end
