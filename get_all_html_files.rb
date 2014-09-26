@@ -1,7 +1,6 @@
 require 'pry'
 require 'nokogiri'
 require 'open-uri'
-require 'curb'
 require 'json'
 
 # Pull first 30 articles and info via API
@@ -12,7 +11,7 @@ articles.each do |article|
   id = article["id"]
   # Remove slash character so as not to mess up file path
   title = article["title"].gsub('/', '')
-  File.open("/Users/samuelgladstone/Dropbox/zendesk_articles/#{title} (#{id}).html", 'w') do |f|
+  File.open("/Users/samuelgladstone/Dropbox/zendesk_articles/unchanged_articles/#{title} (#{id}).html", 'w') do |f|
     f.write("#{article["body"]}")
   end
 end
