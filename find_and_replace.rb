@@ -11,7 +11,6 @@ Dotenv.load
 
 find_and_replaces = {
   # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
-  '<p>&nbsp;</p>' => '',
   'MCDropDown MCDropDown_Open dropDown ' => 'accordionSection closed',
   'MCDropDownBody dropDownBody ' => 'accordionContents',
   '<strong><span ' => '<strong ',
@@ -19,6 +18,9 @@ find_and_replaces = {
   '<p>&nbsp;</p>' => '',
   /<li\svalue\=\"\d*?\">/ => '<li>',
   'dir="ltr"' => '',
+  '<p >' => '<p>',
+  '<p>&nbsp;</p>' => '',
+  '</ol><ol>' => '',
   /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>', # TODO: Check if this is even necessary
   /\<span class\=\"MCDropDownHead\s*dropDownHead\s\"\>/ => '<span>', #TODO: Check if this is even necessary
   'style="font-size: 10pt;"' => 'class="smallFont"' # TODO: verify that this works properly
@@ -79,6 +81,15 @@ Dir.glob(html_files) do |html_file|
     file.puts text
   end
 
+  File.open(html_file, 'w') do |file|
+    text.gsub!(/\<a\sclass\=\"MCPopupThumbnailLink\sMCPopupThumbnailHover\"\s+href\=\"(.|\s)*?\"\>\s*?\<img\sclass\=\"MCPopupThumbnail\simg\s*\"(.|\s)*?src\=\"(.|\s)*?\<\/a\>/) do
+      title = Nokogiri::HTML($&).css("a[class='MCPopupThumbnailLink MCPopupThumbnailHover']").first.css('img').first['title']
+      src = Nokogiri::HTML($&).css("a[class='MCPopupThumbnailLink MCPopupThumbnailHover']").first['href']
+      "<img class=\"imgThumbnail inactive\" title=\"#{title}\" src=\"#{src}\">"
+    end
+    file.puts text
+  end
+
   # Remove classes spans (produced by line 16 of this file)
   # TODO: Check if replacing those spans (line 16) is even necessary
   File.open(html_file, 'w') do |file|
@@ -92,7 +103,6 @@ Dir.glob(html_files) do |html_file|
   # actually fires, since it looks for them
   File.open(html_file, 'w') do |file|
     accordion_regex = /<div\sclass\=\"accordionSection\sclosed\"\>.*?\<div\sclass\=\"accordionContents\"\>/m
-    # binding.pry if html_file == '/Users/samuelgladstone/Dropbox/work/html_files/work_orders.html'
     if accordion_regex.match(text) && !accordion_regex.match(text).to_s.include?('<h2>')
       text.gsub!(/<div\sclass\=\"accordionSection\sclosed\"\>.*?\<div\sclass\=\"accordionContents\"\>/m) do
         regex_match = $&
@@ -117,8 +127,8 @@ end
 # binding.pry
 
 articles_changed = 1
-MAX_ARTICLES_CHANGED = 30
-MAX_ARTICLES_PER_MINUTE = 200
+MAX_ARTICLES_CHANGED = 5 # Normally 30, as that's what the API gives us per page
+MAX_ARTICLES_PER_MINUTE = 199 # API limit - 1 (due to GET request)
 
 # Set changes to each article's body and PUT it via the API
 Dir.glob(html_files) do |html_file|
@@ -127,7 +137,7 @@ Dir.glob(html_files) do |html_file|
   replacement_json = "{\"article\":{\"body\":\"#{new_body}\"}}"
   id = html_file.gsub('/Users/samuelgladstone/Dropbox/zendesk_articles/unchanged_articles/', '').gsub(/.*(?=\()/, '').gsub(/[\(\)]/, '').gsub('.html', '')
   # PUT new auto-formed body via an API call
-  c = Curl::Easy.http_put("https://buildium1389260253.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
+  c = Curl::Easy.http_put("https://buildium.zendesk.com/api/v2/help_center/articles/#{id}.json", replacement_json) do |curl|
     curl.http_auth_types = :basic
     curl.username = ENV["API_EMAIL"]
     curl.password = ENV["API_PASSWORD"]
@@ -138,5 +148,6 @@ Dir.glob(html_files) do |html_file|
   puts c.status
   puts
   articles_changed += 1
-  break if articles_changed > MAX_ARTICLES_CHANGED
+  break if articles_changed > MAX_ARTICLES_CHANGED ||
+           articles_changed > MAX_ARTICLES_PER_MINUTE
 end
