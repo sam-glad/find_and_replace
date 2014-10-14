@@ -3,8 +3,8 @@ require 'nokogiri'
 require 'open-uri'
 require 'json'
 
-# Pull first 30 articles and info via API
-PAGE_NUMBER = 5
+# Pull 30 articles and info via API
+PAGE_NUMBER = 8
 api_result = open("https://buildium.zendesk.com/api/v2/help_center/articles.json?page=#{PAGE_NUMBER}").read
 articles = JSON.parse(api_result)["articles"]
 

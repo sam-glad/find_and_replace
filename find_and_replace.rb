@@ -15,11 +15,9 @@ find_and_replaces = {
   'MCDropDownBody dropDownBody ' => 'accordionContents',
   '<strong><span ' => '<strong ',
   '</span></strong>' => '</strong>',
-  '<p>&nbsp;</p>' => '',
   /<li\svalue\=\"\d*?\">/ => '<li>',
   'dir="ltr"' => '',
   '<p >' => '<p>',
-  '<p>&nbsp;</p>' => '',
   '</ol><ol>' => '',
   /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>', # TODO: Check if this is even necessary
   /\<span class\=\"MCDropDownHead\s*dropDownHead\s\"\>/ => '<span>', #TODO: Check if this is even necessary
@@ -127,7 +125,7 @@ end
 # binding.pry
 
 articles_changed = 1
-MAX_ARTICLES_CHANGED = 5 # Normally 30, as that's what the API gives us per page
+MAX_ARTICLES_CHANGED = 30 # Normally 30, as that's what the API gives us per page
 MAX_ARTICLES_PER_MINUTE = 199 # API limit - 1 (due to GET request)
 
 # Set changes to each article's body and PUT it via the API
