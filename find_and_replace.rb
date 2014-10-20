@@ -11,6 +11,7 @@ Dotenv.load
 
 find_and_replaces = {
   # /<span class=\"[a-zA-z]*\">/ => '', FIXME: Why did I put this here?
+  # FIXME why doesn't this work? /Default\.Web\-\n\nLL\,Default\.Web\-PM\"\>/ => "Default.Web-LL,Default.Web-PM\">",
   'MCDropDown MCDropDown_Open dropDown ' => 'accordionSection closed',
   'MCDropDownBody dropDownBody ' => 'accordionContents',
   '<strong><span ' => '<strong ',
@@ -21,7 +22,11 @@ find_and_replaces = {
   '</ol><ol>' => '',
   /<span\sclass\=\"MCDropDownHotSpot[^>]*?>/ => '<span>', # TODO: Check if this is even necessary
   /\<span class\=\"MCDropDownHead\s*dropDownHead\s\"\>/ => '<span>', #TODO: Check if this is even necessary
-  'style="font-size: 10pt;"' => 'class="smallFont"' # TODO: verify that this works properly
+  'style="font-size: 10pt;"' => 'class="smallFont"', # TODO: verify that this works properly
+  "\t" => '',
+  '<strong class="smallFont">Save time!</strong>' => '<strong>Save time!</strong>',
+  "<p>&nbsp;</p>\r\n<p class=\"MCWebHelpFramesetLink MCWebHelpFramesetLinkBottom\">&nbsp;</p>" => "<p class=\"MCWebHelpFramesetLink MCWebHelpFramesetLinkBottom\">&nbsp;</p>",
+  "<table class=\"article\" data-mc-conditions=\"Default.Web-HOA,Default.Web-\r\n\r\nLL,Default.Web-PM\"><colgroup><col /> <col /> </colgroup>" => "<table class=\"article\" data-mc-conditions=\"Default.Web-HOA,Default.Web-LL,Default.Web-PM\"><colgroup><col /> <col /> </colgroup>"
 }
 
 # Find and replace everything in the find_and_replaces hash above

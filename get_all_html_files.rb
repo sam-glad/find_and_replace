@@ -4,7 +4,7 @@ require 'open-uri'
 require 'json'
 
 # Pull 30 articles and info via API
-PAGE_NUMBER = 8
+PAGE_NUMBER = 20
 api_result = open("https://buildium.zendesk.com/api/v2/help_center/articles.json?page=#{PAGE_NUMBER}").read
 articles = JSON.parse(api_result)["articles"]
 
